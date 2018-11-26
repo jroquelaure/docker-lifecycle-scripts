@@ -86,7 +86,7 @@ node {
                 'comment'            : 'ready for release',
                 'sourceRepo'         : 'libs-dev-local',
                 'status'             : 'Released',
-                'includeDependencies': true,
+                'includeDependencies': false,
                 'copy'               : true
             ]
 
