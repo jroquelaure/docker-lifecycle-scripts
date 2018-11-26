@@ -50,13 +50,13 @@ node {
                 }"""
                 println(downloadSpec)
                 artServer.download(downloadSpec)
-                def tagNameTest='docker-app-test:'+env.BUILD_NUMBER
-                sh 'docker rmi '+tagNameTest+' || true'
-                docker.build(tagNameTest)
-                docker.image(tagNameTest).withRun('-p 8181:8181') {c ->
-                sleep 5
-                    sh 'curl "http://localhost:8181/swampup/"'
-                }
+                // def tagNameTest='docker-app-test:'+env.BUILD_NUMBER
+                // sh 'docker rmi '+tagNameTest+' || true'
+                // docker.build(tagNameTest)
+                // docker.image(tagNameTest).withRun('-p 8181:8181') {c ->
+                // sleep 5
+                //     sh 'curl "http://localhost:8181/swampup/"'
+                // }
            }
         
             stage('Xray scan')
@@ -98,21 +98,21 @@ node {
             stage('distribute')
             {
 
-                def distributionConfig = [
-                    // Mandatory parameters
-                    'buildName'             : env.JOB_NAME,
-                    'buildNumber'           : env.BUILD_NUMBER,
-                    'targetRepo'            : 'pizza-distrib',
+            //     def distributionConfig = [
+            //         // Mandatory parameters
+            //         'buildName'             : env.JOB_NAME,
+            //         'buildNumber'           : env.BUILD_NUMBER,
+            //         'targetRepo'            : 'pizza-distrib',
                         
-                    // Optional parameters
-                    'publish'               : true, // Default: true. If true, artifacts are published when deployed to Bintray.
-                    'overrideExistingFiles' : true, // Default: false. If true, Artifactory overwrites builds already existing in the target path in Bintray.
-                    'async'                 : false, // Default: false. If true, the build will be distributed asynchronously. Errors and warnings may be viewed in the Artifactory log.
-                    "sourceRepos"           : ["libs-release-local2"], // An array of local repositories from which build artifacts should be collected.
-                    'dryRun'                : false, // Default: false. If true, distribution is only simulated. No files are actually moved.
-                ]
+            //         // Optional parameters
+            //         'publish'               : true, // Default: true. If true, artifacts are published when deployed to Bintray.
+            //         'overrideExistingFiles' : true, // Default: false. If true, Artifactory overwrites builds already existing in the target path in Bintray.
+            //         'async'                 : false, // Default: false. If true, the build will be distributed asynchronously. Errors and warnings may be viewed in the Artifactory log.
+            //         "sourceRepos"           : ["libs-release-local2"], // An array of local repositories from which build artifacts should be collected.
+            //         'dryRun'                : false, // Default: false. If true, distribution is only simulated. No files are actually moved.
+            //     ]
 
-            artServer.distribute distributionConfig
+            // artServer.distribute distributionConfig
 
             //   def distribStr=curlstr+'api/build/distribute/'+env.JOB_NAME+'/'+env.BUILD_NUMBER+"' -X POST -H 'Content-Type: application/json' "
             //   def warDistrib = distribStr+"-T distributeWar.json"
