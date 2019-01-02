@@ -1,0 +1,67 @@
+node(){
+    stage 'get sources'
+        git url: 'https://github.com/jroquelaure/frogs-ui.git'
+        
+    stage 'configure Artifactory integration'
+        def server = Artifactory.server('yodafrog')
+        def buildInfo = Artifactory.newBuildInfo()
+        def username = "jenkins"
+        def password = "AP8QbJTAacZyK9yRHAXnoL9mC57"
+        def bowerUrl = "$server.url/api/bower/bower-dev"
+        
+         sh("""echo '{
+             "directory": "app/bower_components",
+             "registry" : "http://$username:$password@yodafrog.sas.jfrog.internal:8081/artifactory/api/bower/bower-dev",
+             "resolvers" : [ "bower-art-resolver" ]
+         }' > .bowerrc""".toString())
+        
+        
+    stage 'build the project'
+        def rtNpm = Artifactory.newNpmBuild()
+        rtNpm.resolver server: server, repo: 'npm-dev'
+        sh "npm version 0.2.1-$buildInfo.number --force --no-git-tag-version"
+         sh "npm install shelljs"
+        rtNpm.install path: 'package.json', buildInfo: buildInfo
+        rtNpm.deployer server: server, repo: 'npm-dev'
+    
+    stage 'publish to Artifactory'
+        rtNpm.deployer server: server, repo: 'npm-dev'
+        rtNpm.publish path: '.', buildInfo: buildInfo
+        server.publishBuildInfo(buildInfo)
+        
+    stage 'test'
+        //TODO some test
+    stage 'promote'
+         def promotionConfig = [
+        // Mandatory parameters
+        'buildName'          : buildInfo.name,
+        'buildNumber'        : buildInfo.number,
+        'targetRepo'         : 'npm-release-local',
+
+        // Optional parameters
+        'comment'            : 'ready for release',
+        'sourceRepo'         : 'npm-dev-local',
+        'status'             : 'Released',
+        'includeDependencies': true,
+        'copy'               : true
+    ]
+
+    // // Promote build
+     server.promote promotionConfig
+    
+    //   def promotionConfig2 = [
+    //     // Mandatory parameters
+    //     'buildNumber'        : buildInfo.number,
+    //     'buildName'          : buildInfo.name,
+    //     'targetRepo'         : 'npm-release-local',
+
+    //     // Optional parameters
+    //     'comment'            : 'ready for release',
+    //     'sourceRepo'         : 'npm-dev-local',
+    //     'status'             : 'Released',
+    //     'includeDependencies': true,
+    //     'copy'               : true
+    // ]
+    
+    // Artifactory.addInteractivePromotion server: server, promotionConfig: promotionConfig2, displayName: "Promote me please"
+}
