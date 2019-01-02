@@ -39,7 +39,7 @@ dir('docker-app') {
    stage('Build and Deploy') {
         def tagName='docker-dev.yodafrog.sas.jfrog.internal:8081/docker-webinar-app:'+env.BUILD_NUMBER
         docker.build(tagName)
-        def artDocker= Artifactory.docker(uname, pw)
+        def artDocker= Artifactory.docker server: artServer
         artDocker.push(tagName, 'docker-dev', buildInfo)
         artServer.publishBuildInfo(buildInfo)
         sh 'sed -E "s/@/$BUILD_NUMBER/" retag.json > retag_out.json'
@@ -59,7 +59,7 @@ def uname=env.USERNAME
 def pw=env.PASSWORD
 artServer.username=uname
 artServer.password=pw
-        def artDocker= Artifactory.docker(uname, pw)
+        def artDocker= Artifactory.docker server: artServer
 def curlstr="curl -H 'X-JFrog-Art-Api:$pw' '$artServer.url"
     dir('docker-app/app-test') {
         stage('testing app') {

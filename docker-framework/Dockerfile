@@ -1,7 +1,5 @@
 FROM docker-dev.yodafrog.sas.jfrog.internal/ubuntu:latest
 
-MAINTAINER Jonathan ROQUELAURE jonathanr@jfrog.com
-
 RUN /bin/bash -c cd ~; cd /home ; mkdir -p exec
 ADD jdk/jdk-8-linux-x64.tar.gz /home/exec
 RUN /bin/bash -c cd /home/exec; mv /home/exec/jdk1* /home/exec/jdk8
