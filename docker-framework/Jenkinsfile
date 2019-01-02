@@ -13,7 +13,7 @@ node {
     artServer.username=uname
     artServer.password=pw
     def curlstr="curl -H 'X-JFrog-Art-Api:$pw' '$artServer.url"
-    def artDocker= Artifactory.docker(uname, pw)
+    def artDocker= Artifactory.docker server: server
     def buildInfo = Artifactory.newBuildInfo()
     dir('docker-framework') {
       buildInfo.env.capture = true
