@@ -78,7 +78,7 @@ node {
     artServer.username=uname
     artServer.password=pw
     def curlstr="curl -H 'X-JFrog-Art-Api:$pw' '$artServer.url"
-    def artDocker= Artifactory.docker(uname, pw)
+    def artDocker= Artifactory.docker server: artServer
     dir('docker-framework/framework-test')
     {
       stage('testing') {
